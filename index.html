@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Приглашение на свадьбу</title>
+    <link rel="preload" as="image" href="./public/assets/main_bride_talking.png" />
+    <link rel="preload" as="image" href="./public/assets/main_groom_talking.png" />
+    <link rel="preload" as="image" href="./public/assets/main_background.png" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main>
+      <section
+        class="hero-scene is-bride-speaking"
+        role="button"
+        tabindex="0"
+        aria-label="Невеста говорит. Нажмите, чтобы передать слово жениху."
+        data-speaker="bride"
+      >
+        <div class="desktop-scene" aria-hidden="true">
+          <div class="desktop-frame desktop-frame--bride"></div>
+          <div class="desktop-frame desktop-frame--groom"></div>
+        </div>
+
+        <div class="mobile-scene" aria-hidden="true">
+          <div class="mobile-background"></div>
+          <img
+            class="character character--groom"
+            src="./public/assets/groom.png"
+            alt=""
+          />
+          <img
+            class="character character--bride"
+            src="./public/assets/bride.png"
+            alt=""
+          />
+        </div>
+
+        <div class="dialog-box" aria-live="polite">
+          <div class="dialog-text"></div>
+        </div>
+      </section>
+    </main>
+    <script src="./script.js"></script>
+  </body>
+</html>

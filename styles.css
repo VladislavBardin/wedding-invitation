@@ -1,0 +1,238 @@
+:root {
+  color-scheme: dark;
+  background: #19110d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow-x: hidden;
+  background: #19110d;
+}
+
+main {
+  min-height: 100vh;
+}
+
+.hero-scene {
+  --bride-filter: brightness(1.05) saturate(1.04);
+  --bride-frame-opacity: 1;
+  --bride-opacity: 1;
+  --bride-transform: translateX(-43%) scale(1);
+  --bride-z-index: 3;
+  --groom-filter: brightness(0.46) saturate(0.76);
+  --groom-frame-opacity: 0;
+  --groom-opacity: 0;
+  --groom-transform: translateX(-130%) scale(0.92);
+  --groom-z-index: 2;
+  --dialog-desktop-left: 53%;
+  --dialog-desktop-top: 52%;
+  --dialog-desktop-width: min(34vw, 520px);
+  --mobile-bg-position: 58% center;
+  --spotlight-x: 56%;
+  --spotlight-y: 35%;
+  position: relative;
+  min-height: 100svh;
+  width: 100%;
+  overflow: hidden;
+  cursor: pointer;
+  background: #19110d;
+  isolation: isolate;
+  touch-action: manipulation;
+}
+
+.hero-scene:focus-visible {
+  outline: 2px solid rgba(255, 231, 183, 0.75);
+  outline-offset: -10px;
+}
+
+.desktop-scene,
+.desktop-frame,
+.mobile-scene,
+.mobile-background {
+  position: absolute;
+  inset: 0;
+}
+
+.desktop-frame {
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0;
+  transition: opacity 650ms ease;
+  will-change: opacity;
+}
+
+.desktop-frame--bride {
+  background-image: url("./public/assets/main_bride_talking.png");
+  opacity: var(--bride-frame-opacity);
+}
+
+.desktop-frame--groom {
+  background-image: url("./public/assets/main_groom_talking.png");
+  opacity: var(--groom-frame-opacity);
+}
+
+.mobile-scene {
+  display: none;
+}
+
+.dialog-box {
+  position: absolute;
+  top: var(--dialog-desktop-top);
+  left: var(--dialog-desktop-left);
+  width: var(--dialog-desktop-width);
+  z-index: 6;
+  min-height: 165px;
+  padding: clamp(20px, 2vw, 32px) clamp(24px, 2.5vw, 40px);
+  color: #fffaf2;
+  font-family: "Courier New", Courier, monospace;
+  font-size: clamp(14px, 0.98vw, 17px);
+  line-height: 1.58;
+  letter-spacing: 0;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+  background:
+    linear-gradient(
+      126deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.03) 36%,
+      rgba(255, 255, 255, 0) 62%
+    ),
+    rgba(20, 8, 5, 0.4);
+  border: 0;
+  border-radius: 0 14px 14px 14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -24px 54px rgba(20, 8, 5, 0.18),
+    0 18px 56px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(1px) saturate(1.38);
+  transition:
+    top 500ms ease,
+    left 500ms ease,
+    width 500ms ease,
+    opacity 250ms ease;
+}
+
+.dialog-text {
+  max-width: 100%;
+}
+
+.dialog-text p {
+  margin: 0;
+  white-space: pre-line;
+}
+
+.dialog-text p + p {
+  margin-top: 1.1em;
+}
+
+@supports not (height: 100svh) {
+  .hero-scene {
+    min-height: 100vh;
+  }
+}
+
+@media (max-width: 720px) {
+  .desktop-scene {
+    display: none;
+  }
+
+  .mobile-scene {
+    display: block;
+  }
+
+  .dialog-box {
+    top: 55%;
+    left: 7vw;
+    width: 86vw;
+    min-height: 230px;
+    padding: 22px 20px;
+    font-size: clamp(14px, 3.85vw, 17px);
+    line-height: 1.55;
+    background:
+      linear-gradient(
+        126deg,
+        rgba(255, 255, 255, 0.12) 0%,
+        rgba(255, 255, 255, 0.03) 36%,
+        rgba(255, 255, 255, 0) 62%
+      ),
+      rgba(20, 8, 5, 0.2);
+    border-radius: 0 13px 13px 13px;
+  }
+
+  .mobile-scene::after {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    content: "";
+    background: radial-gradient(
+      ellipse 30vw 21svh at var(--spotlight-x) var(--spotlight-y),
+      rgba(11, 7, 4, 0) 0%,
+      rgba(11, 7, 4, 0) 45%,
+      rgba(11, 7, 4, 0.32) 68%,
+      rgba(11, 7, 4, 0.74) 100%
+    );
+    transition: background 700ms ease;
+  }
+
+  .mobile-background {
+    background-image: url("./public/assets/main_background.png");
+    background-position: var(--mobile-bg-position);
+    background-repeat: no-repeat;
+    background-size: cover;
+    transition: background-position 700ms ease;
+    will-change: background-position;
+  }
+
+  .character {
+    position: absolute;
+    width: auto;
+    object-fit: contain;
+    object-position: bottom center;
+    transform-origin: bottom center;
+    transition:
+      opacity 500ms ease,
+      filter 500ms ease,
+      transform 500ms ease;
+    will-change: opacity, filter, transform;
+  }
+
+  .character--groom {
+    left: 50%;
+    bottom: -15svh;
+    z-index: var(--groom-z-index);
+    opacity: var(--groom-opacity);
+    filter: var(--groom-filter);
+    transform: var(--groom-transform);
+    height: 100svh;
+  }
+
+  .character--bride {
+    left: 50%;
+    bottom: -10svh;
+    z-index: var(--bride-z-index);
+    opacity: var(--bride-opacity);
+    filter: var(--bride-filter);
+    transform: var(--bride-transform);
+    height: 88svh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desktop-frame,
+  .mobile-background,
+  .character,
+  .mobile-scene::after,
+  .dialog-box {
+    transition: none;
+  }
+}
