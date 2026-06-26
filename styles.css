@@ -36,7 +36,12 @@ main {
   --dialog-desktop-left: 53%;
   --dialog-desktop-top: 52%;
   --dialog-desktop-width: min(34vw, 520px);
+  --desktop-bride-image: url("./public/assets/main_bride_talking.png");
+  --desktop-groom-image: url("./public/assets/main_groom_talking.png");
+  --mobile-bg-image: url("./public/assets/main_background.png");
   --mobile-bg-position: 58% center;
+  --spotlight-height: 21svh;
+  --spotlight-width: 30vw;
   --spotlight-x: 56%;
   --spotlight-y: 35%;
   position: relative;
@@ -72,12 +77,12 @@ main {
 }
 
 .desktop-frame--bride {
-  background-image: url("./public/assets/main_bride_talking.png");
+  background-image: var(--desktop-bride-image);
   opacity: var(--bride-frame-opacity);
 }
 
 .desktop-frame--groom {
-  background-image: url("./public/assets/main_groom_talking.png");
+  background-image: var(--desktop-groom-image);
   opacity: var(--groom-frame-opacity);
 }
 
@@ -134,6 +139,263 @@ main {
   margin-top: 1.1em;
 }
 
+.hero-scene.is-questioning .dialog-box {
+  min-height: 0;
+  padding: 0;
+  font-size: clamp(13px, 0.9vw, 15px);
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.questionnaire {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 3.2vh, 44px);
+  width: 100%;
+}
+
+.question-bubble,
+.answer-choice,
+.answer-input {
+  color: #fffaf2;
+  font: inherit;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+  background:
+    linear-gradient(
+      126deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.03) 36%,
+      rgba(255, 255, 255, 0) 62%
+    ),
+    rgba(20, 8, 5, 0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -24px 54px rgba(20, 8, 5, 0.18),
+    0 18px 56px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(1px) saturate(1.38);
+}
+
+.question-bubble {
+  min-height: 118px;
+  padding: 32px 52px;
+  border-radius: 0 14px 14px 14px;
+}
+
+.question-bubble p {
+  margin: 0;
+  white-space: pre-line;
+}
+
+.question-bubble p + p {
+  margin-top: 1.25em;
+}
+
+.answer-list {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: clamp(18px, 2.7vh, 34px);
+  width: min(45vw, 620px);
+  margin-left: auto;
+}
+
+.answer-choice,
+.answer-input {
+  width: 100%;
+  min-height: 66px;
+  border: 0;
+  border-radius: 999px;
+}
+
+.answer-choice {
+  cursor: pointer;
+  padding: 17px 34px;
+  font-weight: 700;
+  text-align: center;
+  transition:
+    transform 180ms ease,
+    background 180ms ease;
+}
+
+.answer-choice:hover {
+  transform: translateY(-2px);
+}
+
+.answer-choice--accent {
+  background:
+    linear-gradient(
+      126deg,
+      rgba(84, 132, 255, 0.18) 0%,
+      rgba(255, 255, 255, 0.04) 62%
+    ),
+    rgba(8, 13, 37, 0.58);
+  box-shadow:
+    inset 0 1px 0 rgba(155, 189, 255, 0.22),
+    0 0 0 1px rgba(71, 117, 255, 0.9),
+    0 18px 56px rgba(0, 0, 0, 0.24);
+}
+
+.answer-choice--submit {
+  align-self: flex-end;
+  width: min(28vw, 390px);
+}
+
+.answer-input {
+  padding: 0 34px;
+  text-align: center;
+  outline: 0;
+}
+
+.answer-input::placeholder {
+  color: rgba(255, 250, 242, 0.42);
+}
+
+.hero-scene.is-groom-panel .dialog-box,
+.hero-scene.is-final-panel .dialog-box {
+  min-height: 0;
+  padding: 0;
+  font-size: clamp(13px, 0.88vw, 15px);
+  background: none;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.groom-panel {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(26px, 4vh, 48px);
+  width: 100%;
+}
+
+.groom-panel__item {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 2.5vh, 28px);
+}
+
+.groom-panel__bubble,
+.groom-panel__action {
+  color: #fffaf2;
+  font: inherit;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+  background:
+    linear-gradient(
+      126deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.03) 36%,
+      rgba(255, 255, 255, 0) 62%
+    ),
+    rgba(20, 8, 5, 0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -24px 54px rgba(20, 8, 5, 0.18),
+    0 18px 56px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(1px) saturate(1.38);
+}
+
+.groom-panel__bubble {
+  min-height: 150px;
+  padding: 34px 52px;
+  border-radius: 0 14px 14px 14px;
+}
+
+.groom-panel__bubble p {
+  margin: 0;
+  white-space: pre-line;
+}
+
+.groom-panel__bubble p + p {
+  margin-top: 1.2em;
+}
+
+.groom-panel__action {
+  align-self: flex-end;
+  width: min(30vw, 420px);
+  min-height: 68px;
+  border: 0;
+  border-radius: 999px;
+  padding: 17px 34px;
+  cursor: pointer;
+  font-weight: 700;
+  text-align: center;
+  transition:
+    transform 180ms ease,
+    background 180ms ease;
+}
+
+.groom-panel__action:hover {
+  transform: translateY(-2px);
+}
+
+.final-panel {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(22px, 3.2vh, 36px);
+  width: 100%;
+}
+
+.final-panel__bubble,
+.final-panel__action {
+  color: #fffaf2;
+  font: inherit;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+  background:
+    linear-gradient(
+      126deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.03) 36%,
+      rgba(255, 255, 255, 0) 62%
+    ),
+    rgba(20, 8, 5, 0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -24px 54px rgba(20, 8, 5, 0.18),
+    0 18px 56px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(1px) saturate(1.38);
+}
+
+.final-panel__bubble {
+  padding: 40px 52px;
+  border-radius: 0 14px 14px 14px;
+  font-size: clamp(16px, 1.35vw, 22px);
+  line-height: 1.75;
+}
+
+.final-panel__bubble p {
+  margin: 0;
+  white-space: pre-line;
+}
+
+.final-panel__bubble p + p {
+  margin-top: 1.45em;
+}
+
+.final-panel__signature {
+  font-style: italic;
+}
+
+.final-panel__action {
+  align-self: flex-end;
+  width: min(30vw, 420px);
+  min-height: 68px;
+  border: 0;
+  border-radius: 999px;
+  padding: 17px 34px;
+  cursor: pointer;
+  font-weight: 700;
+  text-align: center;
+  transition:
+    transform 180ms ease,
+    background 180ms ease;
+}
+
+.final-panel__action:hover {
+  transform: translateY(-2px);
+}
+
 @supports not (height: 100svh) {
   .hero-scene {
     min-height: 100vh;
@@ -168,6 +430,97 @@ main {
     border-radius: 0 13px 13px 13px;
   }
 
+  .hero-scene.is-questioning .dialog-box {
+    top: auto;
+    bottom: 5svh;
+    left: 6vw;
+    width: 88vw;
+    font-size: clamp(13px, 3.35vw, 15px);
+  }
+
+  .questionnaire {
+    gap: 18px;
+  }
+
+  .question-bubble {
+    min-height: 96px;
+    padding: 22px 22px;
+    font-size: clamp(13px, 3.35vw, 15px);
+    line-height: 1.45;
+  }
+
+  .answer-list {
+    width: 100%;
+    gap: 16px;
+  }
+
+  .answer-choice,
+  .answer-input {
+    min-height: 56px;
+    padding: 13px 20px;
+    font-size: clamp(13px, 3.35vw, 15px);
+  }
+
+  .answer-choice--submit {
+    width: 100%;
+  }
+
+  .hero-scene.is-groom-panel .dialog-box,
+  .hero-scene.is-final-panel .dialog-box {
+    top: auto;
+    bottom: 5svh;
+    left: 6vw;
+    width: 88vw;
+    font-size: clamp(13px, 3.35vw, 15px);
+  }
+
+  .groom-panel {
+    gap: 18px;
+  }
+
+  .groom-panel__item {
+    gap: 14px;
+  }
+
+  .groom-panel__bubble {
+    min-height: 112px;
+    padding: 22px 22px;
+    font-size: clamp(13px, 3.35vw, 15px);
+    line-height: 1.45;
+  }
+
+  .groom-panel__bubble p + p {
+    margin-top: 1em;
+  }
+
+  .groom-panel__action {
+    width: 100%;
+    min-height: 56px;
+    padding: 13px 20px;
+    font-size: clamp(13px, 3.35vw, 15px);
+  }
+
+  .final-panel {
+    gap: 18px;
+  }
+
+  .final-panel__bubble {
+    padding: 26px 24px;
+    font-size: clamp(16px, 4.4vw, 20px);
+    line-height: 1.6;
+  }
+
+  .final-panel__bubble p + p {
+    margin-top: 1.25em;
+  }
+
+  .final-panel__action {
+    width: 100%;
+    min-height: 58px;
+    padding: 13px 20px;
+    font-size: clamp(15px, 4vw, 18px);
+  }
+
   .mobile-scene::after {
     position: absolute;
     inset: 0;
@@ -175,7 +528,7 @@ main {
     pointer-events: none;
     content: "";
     background: radial-gradient(
-      ellipse 30vw 21svh at var(--spotlight-x) var(--spotlight-y),
+      ellipse var(--spotlight-width) var(--spotlight-height) at var(--spotlight-x) var(--spotlight-y),
       rgba(11, 7, 4, 0) 0%,
       rgba(11, 7, 4, 0) 45%,
       rgba(11, 7, 4, 0.32) 68%,
@@ -185,7 +538,7 @@ main {
   }
 
   .mobile-background {
-    background-image: url("./public/assets/main_background.png");
+    background-image: var(--mobile-bg-image);
     background-position: var(--mobile-bg-position);
     background-repeat: no-repeat;
     background-size: cover;
