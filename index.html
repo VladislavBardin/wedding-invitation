@@ -23,7 +23,17 @@
     <link rel="preload" as="image" href="./public/assets/mobile_letter.png" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body class="intro-active">
+  <body class="intro-active is-loading">
+    <div class="site-loader" role="status" aria-live="polite">
+      <div class="site-loader__content">
+        <p class="site-loader__title">Загружаем приглашение</p>
+        <div class="site-loader__bar" aria-hidden="true">
+          <span class="site-loader__progress"></span>
+        </div>
+        <p class="site-loader__count">0%</p>
+      </div>
+    </div>
+
     <div
       class="intro-envelope"
       role="button"

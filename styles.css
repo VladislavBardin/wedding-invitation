@@ -18,6 +18,10 @@ body {
   background: #19110d;
 }
 
+body.is-loading {
+  overflow: hidden;
+}
+
 body.intro-active {
   overflow: hidden;
 }
@@ -29,6 +33,75 @@ main {
 .intro-active main {
   pointer-events: none;
   visibility: hidden;
+}
+
+body.is-loading .intro-envelope,
+body.is-loading main {
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.site-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  color: #fffaf2;
+  font-family: "Courier New", Courier, monospace;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(255, 221, 162, 0.12), rgba(25, 17, 13, 0.68) 48%, rgba(8, 6, 5, 0.96) 100%),
+    #19110d;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 420ms ease,
+    visibility 420ms ease;
+}
+
+body.is-loading .site-loader {
+  opacity: 1;
+  visibility: visible;
+}
+
+.site-loader__content {
+  width: min(76vw, 420px);
+  text-align: center;
+}
+
+.site-loader__title,
+.site-loader__count {
+  margin: 0;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.64);
+}
+
+.site-loader__title {
+  font-size: clamp(16px, 2vw, 22px);
+  line-height: 1.35;
+}
+
+.site-loader__bar {
+  position: relative;
+  height: 2px;
+  margin: 24px 0 14px;
+  overflow: hidden;
+  background: rgba(255, 250, 242, 0.2);
+}
+
+.site-loader__progress {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--loader-progress, 0%);
+  background: #fffaf2;
+  box-shadow: 0 0 18px rgba(255, 250, 242, 0.5);
+  transition: width 180ms ease;
+}
+
+.site-loader__count {
+  color: rgba(255, 250, 242, 0.72);
+  font-size: 14px;
+  line-height: 1.4;
 }
 
 .intro-envelope {
@@ -814,6 +887,8 @@ main {
   .intro-envelope__image,
   .intro-envelope__card,
   .intro-envelope__hint,
+  .site-loader,
+  .site-loader__progress,
   .desktop-frame,
   .mobile-background,
   .character,

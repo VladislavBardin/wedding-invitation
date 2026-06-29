@@ -2,6 +2,32 @@ const heroScene = document.querySelector(".hero-scene");
 const dialogBox = document.querySelector(".dialog-box");
 const dialogText = document.querySelector(".dialog-text");
 const introEnvelope = document.querySelector(".intro-envelope");
+const siteLoader = document.querySelector(".site-loader");
+const siteLoaderCount = document.querySelector(".site-loader__count");
+
+const preloadAssets = [
+  "./public/assets/bride.png",
+  "./public/assets/envelope_closed.png",
+  "./public/assets/envelope_front.png",
+  "./public/assets/envelope_open.png",
+  "./public/assets/garden_background.png",
+  "./public/assets/garden_bride_talking.png",
+  "./public/assets/garden_groom_talking.png",
+  "./public/assets/garden_scene.png",
+  "./public/assets/groom.png",
+  "./public/assets/hall_bride_talking.png",
+  "./public/assets/hall_desktop.png",
+  "./public/assets/hall_groom_talking.png",
+  "./public/assets/hall_mobile.png",
+  "./public/assets/hall_talking.png",
+  "./public/assets/intro_background.png",
+  "./public/assets/invitation_card.png",
+  "./public/assets/main_background.png",
+  "./public/assets/main_bride_talking.png",
+  "./public/assets/main_groom_talking.png",
+  "./public/assets/main_scene.png",
+  "./public/assets/mobile_letter.png",
+];
 
 const speakerStates = {
   bride: {
@@ -237,6 +263,7 @@ let isQuestioning = false;
 let isGroomPanel = false;
 let isFinalPanel = false;
 let isSubmittingRsvp = false;
+let isInvitationReady = false;
 let currentGroomPanel = 0;
 let hasStartedInvitation = false;
 let hasOpenedIntro = false;
@@ -434,6 +461,67 @@ function createGlassButton(label, onClick) {
 }
 
 function noopAction() {}
+
+function updateLoaderProgress(loaded, total) {
+  if (!siteLoader) {
+    return;
+  }
+
+  const percent = total > 0 ? Math.round((loaded / total) * 100) : 100;
+
+  siteLoader.style.setProperty("--loader-progress", `${percent}%`);
+  if (siteLoaderCount) {
+    siteLoaderCount.textContent = `${percent}%`;
+  }
+}
+
+function preloadImage(src) {
+  return new Promise((resolve) => {
+    const image = new Image();
+
+    image.onload = () => resolve({ ok: true, src });
+    image.onerror = () => resolve({ ok: false, src });
+    image.src = src;
+  });
+}
+
+async function preloadInvitationAssets() {
+  const total = preloadAssets.length;
+  let loaded = 0;
+
+  updateLoaderProgress(loaded, total);
+
+  await Promise.all(
+    preloadAssets.map(async (src) => {
+      const result = await preloadImage(src);
+
+      loaded += 1;
+      updateLoaderProgress(loaded, total);
+
+      if (!result.ok) {
+        console.warn(`Failed to preload image: ${src}`);
+      }
+    }),
+  );
+}
+
+function finishAssetLoading() {
+  isInvitationReady = true;
+  updateLoaderProgress(1, 1);
+  document.body.classList.remove("is-loading");
+
+  if (siteLoader) {
+    siteLoader.setAttribute("aria-hidden", "true");
+  }
+
+  if (!introEnvelope) {
+    startInvitation();
+  }
+}
+
+function prepareInvitation() {
+  preloadInvitationAssets().then(finishAssetLoading);
+}
 
 function getAnswerValue(id) {
   return questionnaireAnswers[id] || "";
@@ -885,6 +973,10 @@ function returnToEnvelopeStart() {
 }
 
 function openIntro() {
+  if (!isInvitationReady) {
+    return;
+  }
+
   if (hasOpenedIntro) {
     finishIntro();
     return;
@@ -972,5 +1064,9 @@ if (introEnvelope) {
     openIntro();
   });
 } else {
-  startInvitation();
+  prepareInvitation();
+}
+
+if (introEnvelope) {
+  prepareInvitation();
 }
