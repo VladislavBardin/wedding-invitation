@@ -249,6 +249,7 @@ const dialogSteps = [
 ];
 
 const TYPE_DELAY_MS = 28;
+const INTRO_HINT_DELAY_MS = 5000;
 const UNABLE_TO_ATTEND_OPTION = "К сожалению, не смогу 💎 200";
 const GUIDE_URL = "./public/assets/documents/guide.pdf";
 const RSVP_CONFIG = window.WEDDING_RSVP_CONFIG || {};
@@ -270,6 +271,7 @@ let hasStartedAudio = false;
 let currentGroomPanel = 0;
 let hasStartedInvitation = false;
 let hasOpenedIntro = false;
+let introHintTimer = null;
 
 const questionSteps = [
   {
@@ -557,6 +559,8 @@ function finishAssetLoading() {
 
   if (!introEnvelope) {
     startInvitation();
+  } else {
+    scheduleIntroHint();
   }
 }
 
@@ -1002,6 +1006,7 @@ function startInvitation() {
 
 function finishIntro() {
   document.body.classList.remove("intro-active");
+  hideIntroHint();
   introEnvelope.classList.add("is-done");
   startInvitation();
 }
@@ -1011,8 +1016,45 @@ function returnToEnvelopeStart() {
   hasStartedInvitation = false;
   hasOpenedIntro = false;
   document.body.classList.add("intro-active");
-  introEnvelope.classList.remove("is-open", "is-done");
+  introEnvelope.classList.remove("is-open", "is-done", "has-visible-hint");
   introEnvelope.setAttribute("aria-label", "Открыть приглашение");
+  scheduleIntroHint();
+}
+
+function clearIntroHintTimer() {
+  if (!introHintTimer) {
+    return;
+  }
+
+  window.clearTimeout(introHintTimer);
+  introHintTimer = null;
+}
+
+function showIntroHint() {
+  introHintTimer = null;
+
+  if (!introEnvelope || hasOpenedIntro || !isInvitationReady) {
+    return;
+  }
+
+  introEnvelope.classList.add("has-visible-hint");
+}
+
+function hideIntroHint() {
+  clearIntroHintTimer();
+
+  if (introEnvelope) {
+    introEnvelope.classList.remove("has-visible-hint");
+  }
+}
+
+function scheduleIntroHint() {
+  if (!introEnvelope || hasOpenedIntro || !isInvitationReady) {
+    return;
+  }
+
+  clearIntroHintTimer();
+  introHintTimer = window.setTimeout(showIntroHint, INTRO_HINT_DELAY_MS);
 }
 
 function openIntro() {
@@ -1020,6 +1062,7 @@ function openIntro() {
     return;
   }
 
+  hideIntroHint();
   startBackgroundAudio();
 
   if (hasOpenedIntro) {

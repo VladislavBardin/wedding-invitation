@@ -241,7 +241,31 @@ body.is-loading .site-loader {
   letter-spacing: 0;
   text-align: center;
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.7);
-  transform: translateX(-50%);
+  opacity: 0;
+  transform: translateX(-50%) translateY(8px) scale(0.98);
+  transition:
+    opacity 420ms ease,
+    transform 420ms ease;
+  pointer-events: none;
+}
+
+.intro-envelope.has-visible-hint:not(.is-open):not(.is-done) .intro-envelope__hint {
+  animation: introHintPulse 1800ms ease-in-out infinite;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+@keyframes introHintPulse {
+  0%,
+  100% {
+    opacity: 0.82;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1.025);
+  }
 }
 
 .hero-scene {
@@ -899,6 +923,7 @@ body.is-loading .site-loader {
   .character,
   .mobile-scene::after,
   .dialog-box {
+    animation: none;
     transition: none;
   }
 }
