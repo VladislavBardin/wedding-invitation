@@ -71,7 +71,8 @@ body.is-loading .site-loader {
 }
 
 .site-loader__title,
-.site-loader__count {
+.site-loader__count,
+.site-loader__sound-hint {
   margin: 0;
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.64);
 }
@@ -102,6 +103,27 @@ body.is-loading .site-loader {
   color: rgba(255, 250, 242, 0.72);
   font-size: 14px;
   line-height: 1.4;
+}
+
+.site-loader__sound-hint {
+  animation: loaderSoundHintPulse 2200ms ease-in-out infinite;
+  margin-top: 18px;
+  color: rgba(255, 250, 242, 0.62);
+  font-size: clamp(13px, 1.2vw, 15px);
+  line-height: 1.45;
+}
+
+@keyframes loaderSoundHintPulse {
+  0%,
+  100% {
+    opacity: 0.68;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.018);
+  }
 }
 
 .intro-envelope {
@@ -918,6 +940,7 @@ body.is-loading .site-loader {
   .intro-envelope__hint,
   .site-loader,
   .site-loader__progress,
+  .site-loader__sound-hint,
   .desktop-frame,
   .mobile-background,
   .character,
