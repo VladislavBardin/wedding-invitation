@@ -21,9 +21,24 @@
     <link rel="preload" as="image" href="./public/assets/envelope_front.png" />
     <link rel="preload" as="image" href="./public/assets/invitation_card.png" />
     <link rel="preload" as="image" href="./public/assets/mobile_letter.png" />
+    <link
+      rel="preload"
+      as="audio"
+      href="./public/assets/audio/armor-instrumental.mp3"
+      type="audio/mpeg"
+    />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body class="intro-active is-loading">
+    <audio
+      class="background-audio"
+      src="./public/assets/audio/armor-instrumental.mp3"
+      preload="auto"
+      loop
+    >
+      <source src="./public/assets/audio/armor-instrumental.mp3" type="audio/mpeg" />
+    </audio>
+
     <div class="site-loader" role="status" aria-live="polite">
       <div class="site-loader__content">
         <p class="site-loader__title">Загружаем приглашение</p>

@@ -4,6 +4,7 @@ const dialogText = document.querySelector(".dialog-text");
 const introEnvelope = document.querySelector(".intro-envelope");
 const siteLoader = document.querySelector(".site-loader");
 const siteLoaderCount = document.querySelector(".site-loader__count");
+const backgroundAudio = document.querySelector(".background-audio");
 
 const preloadAssets = [
   "./public/assets/bride.png",
@@ -264,6 +265,7 @@ let isGroomPanel = false;
 let isFinalPanel = false;
 let isSubmittingRsvp = false;
 let isInvitationReady = false;
+let hasStartedAudio = false;
 let currentGroomPanel = 0;
 let hasStartedInvitation = false;
 let hasOpenedIntro = false;
@@ -461,6 +463,28 @@ function createGlassButton(label, onClick) {
 }
 
 function noopAction() {}
+
+function setupBackgroundAudio() {
+  if (!backgroundAudio) {
+    return;
+  }
+
+  backgroundAudio.volume = 0.38;
+  backgroundAudio.loop = true;
+}
+
+function startBackgroundAudio() {
+  if (!backgroundAudio || hasStartedAudio) {
+    return;
+  }
+
+  hasStartedAudio = true;
+  backgroundAudio.volume = 0.38;
+  backgroundAudio.play().catch((error) => {
+    hasStartedAudio = false;
+    console.warn("Background audio playback was blocked.", error);
+  });
+}
 
 function updateLoaderProgress(loaded, total) {
   if (!siteLoader) {
@@ -977,6 +1001,8 @@ function openIntro() {
     return;
   }
 
+  startBackgroundAudio();
+
   if (hasOpenedIntro) {
     finishIntro();
     return;
@@ -1066,6 +1092,8 @@ if (introEnvelope) {
 } else {
   prepareInvitation();
 }
+
+setupBackgroundAudio();
 
 if (introEnvelope) {
   prepareInvitation();
