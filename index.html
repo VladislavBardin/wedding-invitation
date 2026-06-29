@@ -15,9 +15,51 @@
     <link rel="preload" as="image" href="./public/assets/hall_bride_talking.png" />
     <link rel="preload" as="image" href="./public/assets/hall_groom_talking.png" />
     <link rel="preload" as="image" href="./public/assets/hall_mobile.png" />
+    <link rel="preload" as="image" href="./public/assets/intro_background.png" />
+    <link rel="preload" as="image" href="./public/assets/envelope_closed.png" />
+    <link rel="preload" as="image" href="./public/assets/envelope_open.png" />
+    <link rel="preload" as="image" href="./public/assets/envelope_front.png" />
+    <link rel="preload" as="image" href="./public/assets/invitation_card.png" />
+    <link rel="preload" as="image" href="./public/assets/mobile_letter.png" />
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body>
+  <body class="intro-active">
+    <div
+      class="intro-envelope"
+      role="button"
+      tabindex="0"
+      aria-label="Открыть приглашение"
+    >
+      <div class="intro-envelope__stage" aria-hidden="true">
+        <img
+          class="intro-envelope__image intro-envelope__image--open"
+          src="./public/assets/envelope_open.png"
+          alt=""
+        />
+        <img
+          class="intro-envelope__card intro-envelope__card--desktop"
+          src="./public/assets/invitation_card.png"
+          alt=""
+        />
+        <img
+          class="intro-envelope__card intro-envelope__card--mobile"
+          src="./public/assets/mobile_letter.png"
+          alt=""
+        />
+        <img
+          class="intro-envelope__image intro-envelope__image--front"
+          src="./public/assets/envelope_front.png"
+          alt=""
+        />
+        <img
+          class="intro-envelope__image intro-envelope__image--closed"
+          src="./public/assets/envelope_closed.png"
+          alt=""
+        />
+      </div>
+      <p class="intro-envelope__hint">Нажмите на экран, чтобы продолжить</p>
+    </div>
+
     <main>
       <section
         class="hero-scene is-bride-speaking"
@@ -50,6 +92,7 @@
         </div>
       </section>
     </main>
+    <script src="./config.js"></script>
     <script src="./script.js"></script>
   </body>
 </html>

@@ -1,6 +1,7 @@
 const heroScene = document.querySelector(".hero-scene");
 const dialogBox = document.querySelector(".dialog-box");
 const dialogText = document.querySelector(".dialog-text");
+const introEnvelope = document.querySelector(".intro-envelope");
 
 const speakerStates = {
   bride: {
@@ -101,14 +102,14 @@ const dialogSteps = [
     paragraphs: [
       "Уважаемый желанный гость,",
       "Для нас будет большой радостью видеть Вас 12 сентября на торжественной регистрации нашего брака.",
-      "Мы будем ожидать Вас к 14:10\nв Чкаловском ЗАГСе города Екатеринбурга.",
+      "Мы будем ожидать Вас к 14:10 в Чкаловском ЗАГСе города Екатеринбурга.",
     ],
   },
   {
     scene: "room",
     speaker: "groom",
     paragraphs: [
-      "В этот день мы будем признательны,\nесли Вы поддержите вечерний стиль одежды.",
+      "В этот день мы будем признательны, если Вы поддержите вечерний стиль одежды.",
       "Пусть Ваш образ будет торжественным и элегантным — таким, каким и должен быть вечер, который хочется запомнить надолго.",
     ],
   },
@@ -123,7 +124,7 @@ const dialogSteps = [
     scene: "garden",
     speaker: "groom",
     paragraphs: [
-      "После торжественной регистрации\nмы приглашаем Вас продолжить этот день\nв более уединенной и загородной атмосфере.",
+      "После торжественной регистрации мы приглашаем Вас продолжить этот день в более уединенной и загородной атмосфере.",
     ],
   },
   {
@@ -138,7 +139,7 @@ const dialogSteps = [
     scene: "garden",
     speaker: "bride",
     paragraphs: [
-      "И еще одна деталь: часть вечера пройдет\nна траве, поэтому шпильки могут оказаться не самым удобным выбором.",
+      "И еще одна деталь: часть вечера пройдет на траве, поэтому шпильки могут оказаться не самым удобным выбором.",
     ],
   },
   {
@@ -190,7 +191,7 @@ const dialogSteps = [
       "--spotlight-y": "34%",
     },
     paragraphs: [
-      "От цветов мы просим воздержаться: после торжества мы уедем\nв Москву, и нам будет грустно не успеть насладиться ими как следует.",
+      "От цветов мы просим воздержаться: после торжества мы уедем в Москву, и нам будет грустно не успеть насладиться ими как следует.",
     ],
   },
   {
@@ -215,12 +216,16 @@ const dialogSteps = [
     },
     paragraphs: [
       "Уважаемый желанный гость,",
-      "Позвольте мне задать Вам несколько вопросов. Ваши ответы помогут нам подготовить вечер с должным вниманием к каждому, кто будет рядом\nс нами в этот день.",
+      "Позвольте мне задать Вам несколько вопросов. Ваши ответы помогут нам подготовить вечер с должным вниманием к каждому, кто будет рядом с нами в этот день.",
     ],
   },
 ];
 
 const TYPE_DELAY_MS = 28;
+const UNABLE_TO_ATTEND_OPTION = "К сожалению, не смогу 💎 200";
+const RSVP_CONFIG = window.WEDDING_RSVP_CONFIG || {};
+const RSVP_SUBMIT_URL = RSVP_CONFIG.appsScriptUrl || "";
+const RSVP_EVENT_NAME = RSVP_CONFIG.eventName || "Свадьба";
 
 let currentStep = 0;
 let currentQuestion = 0;
@@ -231,7 +236,10 @@ let isTyping = false;
 let isQuestioning = false;
 let isGroomPanel = false;
 let isFinalPanel = false;
+let isSubmittingRsvp = false;
 let currentGroomPanel = 0;
+let hasStartedInvitation = false;
+let hasOpenedIntro = false;
 
 const questionSteps = [
   {
@@ -241,7 +249,7 @@ const questionSteps = [
       "Да, с радостью буду",
       "Буду только на регистрации",
       "Поеду только на продолжение вечера",
-      "К сожалению, не смогу 💎 200",
+      UNABLE_TO_ATTEND_OPTION,
     ],
   },
   {
@@ -282,7 +290,7 @@ const questionSteps = [
     id: "thanks",
     paragraphs: [
       "Благодарю Вас.",
-      "Ваши ответы помогут нам сделать этот день по-настоящему внимательным\nк нашим гостям.",
+      "Ваши ответы помогут нам сделать этот день по-настоящему внимательным к нашим гостям.",
     ],
     action: "Отправить ответы",
   },
@@ -292,15 +300,15 @@ const groomPanelBlocks = [
   {
     paragraphs: [
       "Чтобы все гости были в курсе деталей, мы создали общий чат.",
-      "Там будут адреса, время, обновления, информация о трансфере и всё,\nчто может понадобиться перед торжеством и в сам день.",
+      "Там будут адреса, время, обновления, информация о трансфере и всё, что может понадобиться перед торжеством и в сам день.",
       "Будем рады видеть Вас среди гостей чата.",
     ],
     action: "Перейти в чат гостей",
   },
   {
     paragraphs: [
-      "Если Вы приезжаете в Екатеринбург, то мы подготовили для Вас\nнебольшой путеводитель по городу.",
-      "В нем — места для прогулок, красивые маршруты и несколько адресов,\nгде можно вкусно поесть до или после торжества.",
+      "Если Вы приезжаете в Екатеринбург, то мы подготовили для Вас небольшой путеводитель по городу.",
+      "В нем — места для прогулок, красивые маршруты и несколько адресов, где можно вкусно поесть до или после торжества.",
     ],
     action: "Открыть путеводитель",
   },
@@ -308,11 +316,24 @@ const groomPanelBlocks = [
 
 const finalPanel = {
   paragraphs: [
-    "Благодарим Вас за то, что прошли этот\nмаленький путь по нашему приглашению и\nузнали всё самое важное.",
+    "Благодарим Вас за то, что прошли этот маленький путь по нашему приглашению и узнали всё самое важное.",
     "Мы будем счастливы видеть Вас 12 сентября.",
     "С уважением и любовью,\nНастя и Владик",
   ],
   action: "Вернуться на старт",
+};
+
+const unableToAttendForm = {
+  id: "unableGuestName",
+  paragraphs: [
+    "Нам очень жаль, что Вы не сможете быть с нами в этот день.",
+    "Подскажите, пожалуйста, как Вас зовут?",
+  ],
+  input: {
+    placeholder: "Ваши имя и фамилия",
+    type: "text",
+  },
+  action: "Отправить форму",
 };
 
 function createParagraphNodes(paragraphs) {
@@ -320,6 +341,27 @@ function createParagraphNodes(paragraphs) {
 
   dialogText.replaceChildren(...nodes);
   return nodes;
+}
+
+function resetDialogTextHeight() {
+  dialogText.style.minHeight = "";
+}
+
+function reserveDialogTextHeight(paragraphs) {
+  resetDialogTextHeight();
+
+  const measure = document.createElement("div");
+  measure.className = "dialog-text__measure";
+
+  paragraphs.forEach((paragraph) => {
+    const node = document.createElement("p");
+    node.textContent = paragraph;
+    measure.append(node);
+  });
+
+  dialogText.append(measure);
+  dialogText.style.minHeight = `${measure.getBoundingClientRect().height}px`;
+  measure.remove();
 }
 
 function stopTyping() {
@@ -348,6 +390,7 @@ function renderDialogInstant(paragraphs) {
 
 function typeDialog(paragraphs) {
   stopTyping();
+  resetDialogTextHeight();
   heroScene.classList.remove("is-questioning");
   heroScene.classList.remove("is-groom-panel");
   heroScene.classList.remove("is-final-panel");
@@ -355,6 +398,7 @@ function typeDialog(paragraphs) {
   activeParagraphs = paragraphs;
 
   const nodes = createParagraphNodes(paragraphs);
+  reserveDialogTextHeight(paragraphs);
   const characters = paragraphs.flatMap((paragraph, paragraphIndex) =>
     [...paragraph].map((character) => ({ character, paragraphIndex })),
   );
@@ -384,13 +428,84 @@ function createGlassButton(label, onClick) {
   button.textContent = label;
   button.addEventListener("click", (event) => {
     event.stopPropagation();
-    onClick();
+    onClick(button);
   });
   return button;
 }
 
+function noopAction() {}
+
+function getAnswerValue(id) {
+  return questionnaireAnswers[id] || "";
+}
+
+function createRsvpPayload(submissionType) {
+  const guestName =
+    getAnswerValue("guestName") || getAnswerValue(unableToAttendForm.id);
+
+  return {
+    eventName: RSVP_EVENT_NAME,
+    submissionType,
+    submittedAt: new Date().toISOString(),
+    attendance: getAnswerValue("attendance"),
+    alcohol: getAnswerValue("alcohol"),
+    transfer: getAnswerValue("transfer"),
+    address: getAnswerValue("address"),
+    guestName,
+    comment: getAnswerValue("comment"),
+  };
+}
+
+async function submitRsvpAnswers(submissionType) {
+  const url = RSVP_SUBMIT_URL.trim();
+
+  if (isSubmittingRsvp) {
+    return false;
+  }
+
+  if (!url) {
+    console.warn("RSVP Apps Script URL is not configured.");
+    return false;
+  }
+
+  isSubmittingRsvp = true;
+
+  try {
+    await fetch(url, {
+      method: "POST",
+      mode: "no-cors",
+      keepalive: true,
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8",
+      },
+      body: JSON.stringify(createRsvpPayload(submissionType)),
+    });
+    return true;
+  } catch (error) {
+    console.error("Failed to submit RSVP answers.", error);
+    return false;
+  } finally {
+    isSubmittingRsvp = false;
+  }
+}
+
+async function submitAndContinue(button, submissionType, onComplete) {
+  const previousLabel = button.textContent;
+
+  button.disabled = true;
+  button.textContent = "Отправляем...";
+  await submitRsvpAnswers(submissionType);
+  button.textContent = previousLabel;
+  button.disabled = false;
+  onComplete();
+}
+
 function getNextQuestionIndex(index, answer) {
   const step = questionSteps[index];
+
+  if (step.id === "attendance" && answer === UNABLE_TO_ATTEND_OPTION) {
+    return null;
+  }
 
   if (step.id === "transfer" && answer === "Нет, доберусь своими силами") {
     delete questionnaireAnswers.address;
@@ -398,6 +513,26 @@ function getNextQuestionIndex(index, answer) {
   }
 
   return index + 1;
+}
+
+async function sendUnableToAttendForm(button) {
+  const previousLabel = button?.textContent;
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Отправляем...";
+  }
+
+  questionnaireAnswers.attendance = UNABLE_TO_ATTEND_OPTION;
+  questionnaireAnswers.__ready = true;
+  await submitRsvpAnswers("declined");
+
+  if (button) {
+    button.textContent = previousLabel;
+    button.disabled = false;
+  }
+
+  returnToEnvelopeStart();
 }
 
 function setSpeaker(speaker) {
@@ -475,6 +610,7 @@ function renderQuestion(index) {
   isGroomPanel = false;
   isFinalPanel = false;
   currentQuestion = index;
+  resetDialogTextHeight();
   setQuestionScene();
   heroScene.classList.add("is-questioning");
   dialogText.replaceChildren();
@@ -504,7 +640,14 @@ function renderQuestion(index) {
     step.options.forEach((option, optionIndex) => {
       const button = createGlassButton(option, () => {
         questionnaireAnswers[step.id] = option;
-        renderQuestion(getNextQuestionIndex(index, option));
+        const nextQuestionIndex = getNextQuestionIndex(index, option);
+
+        if (nextQuestionIndex === null) {
+          renderUnableToAttendForm();
+          return;
+        }
+
+        renderQuestion(nextQuestionIndex);
       });
 
       if (index === 0 && optionIndex === step.options.length - 1) {
@@ -539,15 +682,62 @@ function renderQuestion(index) {
   }
 
   if (step.action) {
-    const action = createGlassButton(step.action, () => {
+    const action = createGlassButton(step.action, (button) => {
       questionnaireAnswers.__ready = true;
-      renderGroomPanel();
+      submitAndContinue(button, "attending", renderGroomPanel);
     });
     action.classList.add("answer-choice--submit");
     wrapper.append(action);
   }
 
   dialogText.append(wrapper);
+}
+
+function renderUnableToAttendForm() {
+  isQuestioning = true;
+  isGroomPanel = false;
+  isFinalPanel = false;
+  currentQuestion = -1;
+  resetDialogTextHeight();
+  setQuestionScene();
+  heroScene.classList.add("is-questioning");
+  dialogText.replaceChildren();
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "questionnaire";
+
+  const questionBubble = document.createElement("div");
+  questionBubble.className = "question-bubble";
+  unableToAttendForm.paragraphs.forEach((paragraph) => {
+    const node = document.createElement("p");
+    node.textContent = paragraph;
+    questionBubble.append(node);
+  });
+
+  const input = document.createElement("input");
+  input.className = "answer-input";
+  input.placeholder = unableToAttendForm.input.placeholder;
+  input.type = unableToAttendForm.input.type;
+  input.value = questionnaireAnswers[unableToAttendForm.id] || "";
+  input.addEventListener("click", (event) => event.stopPropagation());
+  input.addEventListener("input", () => {
+    questionnaireAnswers[unableToAttendForm.id] = input.value;
+  });
+  input.addEventListener("keydown", (event) => {
+    event.stopPropagation();
+
+    if (event.key === "Enter") {
+      event.preventDefault();
+      sendUnableToAttendForm();
+    }
+  });
+
+  const action = createGlassButton(unableToAttendForm.action, sendUnableToAttendForm);
+  action.classList.add("answer-choice--submit");
+
+  wrapper.append(questionBubble, input, action);
+  dialogText.append(wrapper);
+  input.focus();
 }
 
 function setGroomPanelScene() {
@@ -581,6 +771,7 @@ function renderGroomPanel(index = 0) {
   isQuestioning = false;
   isGroomPanel = true;
   currentGroomPanel = index;
+  resetDialogTextHeight();
   setGroomPanelScene();
   heroScene.classList.remove("is-questioning");
   heroScene.classList.add("is-groom-panel");
@@ -600,16 +791,24 @@ function renderGroomPanel(index = 0) {
     bubble.append(node);
   });
 
-  const action = createGlassButton(block.action, () => {
+  const actions = document.createElement("div");
+  actions.className = "groom-panel__actions";
+
+  const action = createGlassButton(block.action, noopAction);
+  action.classList.add("groom-panel__action");
+
+  const nextAction = createGlassButton("Дальше", () => {
     if (index < groomPanelBlocks.length - 1) {
       renderGroomPanel(index + 1);
     } else {
       renderFinalPanel();
     }
   });
-  action.classList.add("groom-panel__action");
+  nextAction.classList.add("groom-panel__action", "groom-panel__next");
 
-  item.append(bubble, action);
+  actions.append(action, nextAction);
+
+  item.append(bubble, actions);
   wrapper.append(item);
 
   dialogText.append(wrapper);
@@ -640,7 +839,7 @@ function setFinalPanelScene() {
   });
 }
 
-function resetInvitation() {
+function resetInvitation({ renderFirstStep = true } = {}) {
   stopTyping();
   isQuestioning = false;
   isGroomPanel = false;
@@ -652,13 +851,55 @@ function resetInvitation() {
     delete questionnaireAnswers[key];
   });
   heroScene.classList.remove("is-questioning", "is-groom-panel", "is-final-panel");
+
+  if (renderFirstStep) {
+    setDialogStep(currentStep);
+  } else {
+    resetDialogTextHeight();
+    dialogText.replaceChildren();
+  }
+}
+
+function startInvitation() {
+  if (hasStartedInvitation) {
+    return;
+  }
+
+  hasStartedInvitation = true;
   setDialogStep(currentStep);
+}
+
+function finishIntro() {
+  document.body.classList.remove("intro-active");
+  introEnvelope.classList.add("is-done");
+  startInvitation();
+}
+
+function returnToEnvelopeStart() {
+  resetInvitation({ renderFirstStep: false });
+  hasStartedInvitation = false;
+  hasOpenedIntro = false;
+  document.body.classList.add("intro-active");
+  introEnvelope.classList.remove("is-open", "is-done");
+  introEnvelope.setAttribute("aria-label", "Открыть приглашение");
+}
+
+function openIntro() {
+  if (hasOpenedIntro) {
+    finishIntro();
+    return;
+  }
+
+  hasOpenedIntro = true;
+  introEnvelope.classList.add("is-open");
+  introEnvelope.setAttribute("aria-label", "Продолжить приглашение");
 }
 
 function renderFinalPanel() {
   isQuestioning = false;
   isGroomPanel = false;
   isFinalPanel = true;
+  resetDialogTextHeight();
   setFinalPanelScene();
   heroScene.classList.remove("is-questioning", "is-groom-panel");
   heroScene.classList.add("is-final-panel");
@@ -678,7 +919,7 @@ function renderFinalPanel() {
     bubble.append(node);
   });
 
-  const action = createGlassButton(finalPanel.action, resetInvitation);
+  const action = createGlassButton(finalPanel.action, returnToEnvelopeStart);
   action.classList.add("final-panel__action");
 
   wrapper.append(bubble, action);
@@ -720,4 +961,16 @@ heroScene.addEventListener("keydown", (event) => {
   advanceDialog();
 });
 
-setDialogStep(currentStep);
+if (introEnvelope) {
+  introEnvelope.addEventListener("click", openIntro);
+  introEnvelope.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+
+    event.preventDefault();
+    openIntro();
+  });
+} else {
+  startInvitation();
+}
