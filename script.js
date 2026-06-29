@@ -502,10 +502,7 @@ function openExternalResource(url) {
 
   if (openedWindow) {
     openedWindow.opener = null;
-    return;
   }
-
-  window.location.href = url;
 }
 
 function setupBackgroundAudio() {
