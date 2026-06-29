@@ -478,6 +478,19 @@ function createGlassButton(label, onClick) {
   return button;
 }
 
+function createGlassLink(label, url) {
+  const link = document.createElement("a");
+  link.className = "answer-choice";
+  link.href = url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.textContent = label;
+  link.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+  return link;
+}
+
 function noopAction() {}
 
 function openExternalResource(url) {
@@ -1017,9 +1030,11 @@ function renderGroomPanel(index = 0) {
   const actions = document.createElement("div");
   actions.className = "groom-panel__actions";
 
-  const action = createGlassButton(block.action, () => {
-    openExternalResource(block.url);
-  });
+  const action = block.url
+    ? createGlassLink(block.action, block.url)
+    : createGlassButton(block.action, () => {
+        openExternalResource(block.url);
+      });
   action.classList.add("groom-panel__action");
 
   const nextAction = createGlassButton("Дальше", () => {

@@ -492,9 +492,13 @@ body.is-loading .site-loader {
 }
 
 .answer-choice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   padding: 17px 34px;
   font-weight: 700;
+  text-decoration: none;
   text-align: center;
   transition:
     transform 180ms ease,
