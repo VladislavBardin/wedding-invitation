@@ -471,11 +471,14 @@ function openExternalResource(url) {
     return;
   }
 
-  const openedWindow = window.open(url, "_blank", "noopener");
+  const link = document.createElement("a");
 
-  if (!openedWindow) {
-    window.location.href = url;
-  }
+  link.href = url;
+  link.target = "_blank";
+  link.rel = "noopener";
+  document.body.append(link);
+  link.click();
+  link.remove();
 }
 
 function setupBackgroundAudio() {
