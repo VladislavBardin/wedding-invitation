@@ -337,6 +337,7 @@ const groomPanelBlocks = [
       "Будем рады видеть Вас среди гостей чата.",
     ],
     action: "Перейти в чат гостей",
+    url: "https://t.me/+RUJSw7RBjcU2NTZi",
   },
   {
     paragraphs: [
