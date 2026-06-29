@@ -503,16 +503,7 @@ function preloadImage(src) {
   return new Promise((resolve) => {
     const image = new Image();
 
-    image.onload = async () => {
-      try {
-        if (image.decode) {
-          await image.decode();
-        }
-        resolve({ ok: true, src });
-      } catch (error) {
-        resolve({ ok: true, src });
-      }
-    };
+    image.onload = () => resolve({ ok: true, src });
     image.onerror = () => resolve({ ok: false, src });
     image.src = src;
   });
