@@ -250,6 +250,7 @@ const dialogSteps = [
 
 const TYPE_DELAY_MS = 28;
 const UNABLE_TO_ATTEND_OPTION = "К сожалению, не смогу 💎 200";
+const GUIDE_URL = "./public/assets/documents/guide.pdf";
 const RSVP_CONFIG = window.WEDDING_RSVP_CONFIG || {};
 const RSVP_SUBMIT_URL = RSVP_CONFIG.appsScriptUrl || "";
 const RSVP_EVENT_NAME = RSVP_CONFIG.eventName || "Свадьба";
@@ -340,6 +341,7 @@ const groomPanelBlocks = [
       "В нем — места для прогулок, красивые маршруты и несколько адресов, где можно вкусно поесть до или после торжества.",
     ],
     action: "Открыть путеводитель",
+    url: GUIDE_URL,
   },
 ];
 
@@ -463,6 +465,18 @@ function createGlassButton(label, onClick) {
 }
 
 function noopAction() {}
+
+function openExternalResource(url) {
+  if (!url) {
+    return;
+  }
+
+  const openedWindow = window.open(url, "_blank", "noopener");
+
+  if (!openedWindow) {
+    window.location.href = url;
+  }
+}
 
 function setupBackgroundAudio() {
   if (!backgroundAudio) {
@@ -906,7 +920,9 @@ function renderGroomPanel(index = 0) {
   const actions = document.createElement("div");
   actions.className = "groom-panel__actions";
 
-  const action = createGlassButton(block.action, noopAction);
+  const action = createGlassButton(block.action, () => {
+    openExternalResource(block.url);
+  });
   action.classList.add("groom-panel__action");
 
   const nextAction = createGlassButton("Дальше", () => {
