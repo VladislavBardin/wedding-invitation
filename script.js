@@ -250,6 +250,7 @@ const dialogSteps = [
 
 const TYPE_DELAY_MS = 28;
 const INTRO_HINT_DELAY_MS = 5000;
+const CEREMONY_ONLY_OPTION = "Буду только на регистрации";
 const UNABLE_TO_ATTEND_OPTION = "К сожалению, не смогу 💎 200";
 const GUIDE_URL = "./public/assets/documents/guide.pdf";
 const RSVP_CONFIG = window.WEDDING_RSVP_CONFIG || {};
@@ -279,7 +280,7 @@ const questionSteps = [
     question: "Сможете ли Вы присутствовать на нашем торжестве 12 сентября?",
     options: [
       "Да, с радостью буду",
-      "Буду только на регистрации",
+      CEREMONY_ONLY_OPTION,
       "Поеду только на продолжение вечера",
       UNABLE_TO_ATTEND_OPTION,
     ],
@@ -362,6 +363,16 @@ const unableToAttendForm = {
     "Нам очень жаль, что Вы не сможете быть с нами в этот день.",
     "Подскажите, пожалуйста, как Вас зовут?",
   ],
+  input: {
+    placeholder: "Ваши имя и фамилия",
+    type: "text",
+  },
+  action: "Отправить форму",
+};
+
+const ceremonyOnlyForm = {
+  id: "ceremonyOnlyGuestName",
+  question: "Подскажите, пожалуйста, как Вас зовут?",
   input: {
     placeholder: "Ваши имя и фамилия",
     type: "text",
@@ -574,7 +585,9 @@ function getAnswerValue(id) {
 
 function createRsvpPayload(submissionType) {
   const guestName =
-    getAnswerValue("guestName") || getAnswerValue(unableToAttendForm.id);
+    getAnswerValue("guestName") ||
+    getAnswerValue(ceremonyOnlyForm.id) ||
+    getAnswerValue(unableToAttendForm.id);
 
   return {
     eventName: RSVP_EVENT_NAME,
@@ -640,6 +653,14 @@ function getNextQuestionIndex(index, answer) {
     return null;
   }
 
+  if (step.id === "attendance" && answer === CEREMONY_ONLY_OPTION) {
+    delete questionnaireAnswers.alcohol;
+    delete questionnaireAnswers.transfer;
+    delete questionnaireAnswers.address;
+    delete questionnaireAnswers.comment;
+    return "ceremonyOnly";
+  }
+
   if (step.id === "transfer" && answer === "Нет, доберусь своими силами") {
     delete questionnaireAnswers.address;
     return questionSteps.findIndex(({ id }) => id === "guestName");
@@ -666,6 +687,26 @@ async function sendUnableToAttendForm(button) {
   }
 
   returnToEnvelopeStart();
+}
+
+async function sendCeremonyOnlyForm(button) {
+  const previousLabel = button?.textContent;
+
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Отправляем...";
+  }
+
+  questionnaireAnswers.attendance = CEREMONY_ONLY_OPTION;
+  questionnaireAnswers.__ready = true;
+  await submitRsvpAnswers("attending");
+
+  if (button) {
+    button.textContent = previousLabel;
+    button.disabled = false;
+  }
+
+  renderGroomPanel();
 }
 
 function setSpeaker(speaker) {
@@ -780,6 +821,11 @@ function renderQuestion(index) {
           return;
         }
 
+        if (nextQuestionIndex === "ceremonyOnly") {
+          renderCeremonyOnlyForm();
+          return;
+        }
+
         renderQuestion(nextQuestionIndex);
       });
 
@@ -866,6 +912,49 @@ function renderUnableToAttendForm() {
   });
 
   const action = createGlassButton(unableToAttendForm.action, sendUnableToAttendForm);
+  action.classList.add("answer-choice--submit");
+
+  wrapper.append(questionBubble, input, action);
+  dialogText.append(wrapper);
+  input.focus();
+}
+
+function renderCeremonyOnlyForm() {
+  isQuestioning = true;
+  isGroomPanel = false;
+  isFinalPanel = false;
+  currentQuestion = -1;
+  resetDialogTextHeight();
+  setQuestionScene();
+  heroScene.classList.add("is-questioning");
+  dialogText.replaceChildren();
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "questionnaire";
+
+  const questionBubble = document.createElement("div");
+  questionBubble.className = "question-bubble";
+  questionBubble.textContent = ceremonyOnlyForm.question;
+
+  const input = document.createElement("input");
+  input.className = "answer-input";
+  input.placeholder = ceremonyOnlyForm.input.placeholder;
+  input.type = ceremonyOnlyForm.input.type;
+  input.value = questionnaireAnswers[ceremonyOnlyForm.id] || "";
+  input.addEventListener("click", (event) => event.stopPropagation());
+  input.addEventListener("input", () => {
+    questionnaireAnswers[ceremonyOnlyForm.id] = input.value;
+  });
+  input.addEventListener("keydown", (event) => {
+    event.stopPropagation();
+
+    if (event.key === "Enter") {
+      event.preventDefault();
+      sendCeremonyOnlyForm();
+    }
+  });
+
+  const action = createGlassButton(ceremonyOnlyForm.action, sendCeremonyOnlyForm);
   action.classList.add("answer-choice--submit");
 
   wrapper.append(questionBubble, input, action);
