@@ -485,14 +485,14 @@ function openExternalResource(url) {
     return;
   }
 
-  const link = document.createElement("a");
+  const openedWindow = window.open(url, "_blank", "noopener,noreferrer");
 
-  link.href = url;
-  link.target = "_blank";
-  link.rel = "noopener";
-  document.body.append(link);
-  link.click();
-  link.remove();
+  if (openedWindow) {
+    openedWindow.opener = null;
+    return;
+  }
+
+  window.location.href = url;
 }
 
 function setupBackgroundAudio() {
