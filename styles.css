@@ -276,7 +276,7 @@ body.is-loading .site-loader {
   pointer-events: none;
 }
 
-.intro-envelope.has-visible-hint:not(.is-open):not(.is-done) .intro-envelope__hint {
+.intro-envelope.has-visible-hint:not(.is-done) .intro-envelope__hint {
   animation: introHintPulse 1800ms ease-in-out infinite;
   opacity: 1;
   transform: translateX(-50%) translateY(0) scale(1);
@@ -525,6 +525,11 @@ body.is-loading .site-loader {
 }
 
 .answer-choice--submit {
+  align-self: flex-end;
+  width: min(28vw, 390px);
+}
+
+.answer-choice--next {
   align-self: flex-end;
   width: min(28vw, 390px);
 }
@@ -810,6 +815,10 @@ body.is-loading .site-loader {
   }
 
   .answer-choice--submit {
+    width: 100%;
+  }
+
+  .answer-choice--next {
     width: 100%;
   }
 

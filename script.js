@@ -856,6 +856,9 @@ function renderQuestion(index) {
     input.placeholder = step.input.placeholder;
     input.type = step.input.type;
     input.value = questionnaireAnswers[step.id] || "";
+    const continueToNextQuestion = () => {
+      renderQuestion(index + 1);
+    };
     input.addEventListener("click", (event) => event.stopPropagation());
     input.addEventListener("input", () => {
       questionnaireAnswers[step.id] = input.value;
@@ -865,10 +868,13 @@ function renderQuestion(index) {
 
       if (event.key === "Enter") {
         event.preventDefault();
-        renderQuestion(index + 1);
+        continueToNextQuestion();
       }
     });
-    wrapper.append(input);
+    const nextAction = createGlassButton("Далее", continueToNextQuestion);
+    nextAction.classList.add("answer-choice--next");
+
+    wrapper.append(input, nextAction);
   }
 
   if (step.action) {
@@ -1135,7 +1141,7 @@ function clearIntroHintTimer() {
 function showIntroHint() {
   introHintTimer = null;
 
-  if (!introEnvelope || hasOpenedIntro || !isInvitationReady) {
+  if (!introEnvelope || introEnvelope.classList.contains("is-done") || !isInvitationReady) {
     return;
   }
 
@@ -1151,7 +1157,7 @@ function hideIntroHint() {
 }
 
 function scheduleIntroHint() {
-  if (!introEnvelope || hasOpenedIntro || !isInvitationReady) {
+  if (!introEnvelope || introEnvelope.classList.contains("is-done") || !isInvitationReady) {
     return;
   }
 
@@ -1175,6 +1181,7 @@ function openIntro() {
   hasOpenedIntro = true;
   introEnvelope.classList.add("is-open");
   introEnvelope.setAttribute("aria-label", "Продолжить приглашение");
+  scheduleIntroHint();
 }
 
 function renderFinalPanel() {
